@@ -4,7 +4,7 @@ metadata:
   name: amorphie-mocks
   namespace: amorphie-mocks
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   ports:
   - port: 5000
     targetPort: 5000
