@@ -1,0 +1,17 @@
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: amorphie-mocks
+    namespace: amorphie-mocks
+  spec:
+    ingressClassName: nginx
+    rules:
+      - http:
+          paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: amorphie
+                port:
+                  number: 5000
