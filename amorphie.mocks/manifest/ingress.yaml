@@ -12,6 +12,6 @@
             pathType: Prefix
             backend:
               service:
-                name: amorphie
+                name: amorphie-mocks
                 port:
                   number: 5000
