@@ -9,14 +9,14 @@ USER amorphie-mocksuser
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 
-COPY ["./amorphie.mockcs/amorphie.mocks.csproj", "."]
+COPY ["./amorphie.mocks/amorphie.mocks.csproj", "."]
 RUN dotnet restore "./amorphie.mocks.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "./amorphie.mockcs/amorphie.mocks.csproj" -c Release -o /app/build
+RUN dotnet build "./amorphie.mocks/amorphie.mocks.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "./amorphie.mockcs/amorphie.mocks.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./amorphie.mocks/amorphie.mocks.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
