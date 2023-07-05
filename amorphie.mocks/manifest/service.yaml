@@ -4,9 +4,9 @@ metadata:
   name: amorphie-mocks
   namespace: amorphie-mocks
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
-  - port: 80
+  - port: 5000
     targetPort: 5000
   selector:
     app: amorphie-mocks
