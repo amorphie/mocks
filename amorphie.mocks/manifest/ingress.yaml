@@ -14,4 +14,4 @@
               service:
                 name: amorphie-mocks
                 port:
-                  number: 80
+                  number: 5000
