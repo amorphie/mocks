@@ -6,18 +6,8 @@ using Microsoft.AspNetCore.SignalR;
 
 public class MessageHub : Hub
 {
-    public override async Task OnConnectedAsync()
+    public async Task SendMessage(string method,string message)
     {
-        await base.OnConnectedAsync();
-    }
-
-    public override async Task OnDisconnectedAsync(Exception exception)
-    {
-        await base.OnDisconnectedAsync(exception);
-    }
-
-    public async Task SendMessage(string message)
-    {
-           await Clients.All.SendAsync(message,default);
+        await Clients.All.SendAsync(method, message, default);
     }
 }
