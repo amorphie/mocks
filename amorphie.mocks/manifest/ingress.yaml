@@ -3,6 +3,8 @@
   metadata:
     name: amorphie-mocks
     namespace: amorphie-mocks
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
   spec:
     ingressClassName: nginx
     rules:
