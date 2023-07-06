@@ -12,7 +12,7 @@
     rules:
       - http:
           paths:
-          - path: /(.*)
+          - path: /amorphie-mocks(/|$)(.*)
             pathType: Prefix
             backend:
               service:
