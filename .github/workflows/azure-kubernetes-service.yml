@@ -15,8 +15,8 @@ on:
 env:
   APP_NAME: amorphie.mocks
   NAMESPACE: amorphie-mocks
-  CLUSTER_NAME: BurganAKS
-  CLUSTER_RESOURCE_GROUP: BurganTech
+  CLUSTER_NAME: Endorsment
+  CLUSTER_RESOURCE_GROUP: Endorsement_group
   SECRET: docker-hub
 
 jobs:
