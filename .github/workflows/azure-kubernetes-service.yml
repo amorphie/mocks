@@ -15,7 +15,7 @@ on:
 env:
   APP_NAME: amorphie.mocks
   NAMESPACE: amorphie-mocks
-  CLUSTER_NAME: Endorsment
+  CLUSTER_NAME: Endorsement
   CLUSTER_RESOURCE_GROUP: Endorsement_group
   SECRET: docker-hub
 
