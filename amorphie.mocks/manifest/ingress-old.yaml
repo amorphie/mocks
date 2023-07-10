@@ -1,1 +1,21 @@
-
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: amorphie-mocks
+    namespace: amorphie-mocks
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+  spec:
+    ingressClassName: nginx
+    rules:
+      - http:
+          paths:
+          - path: /amorphie-mocks(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: amorphie-mocks
+                port:
+                  number: 80
