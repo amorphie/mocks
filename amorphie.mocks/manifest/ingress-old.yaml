@@ -17,4 +17,3 @@
                 name: amorphie-mocks
                 port:
                   number: 80
-      apiVersion: networking.k8s.io/v1
