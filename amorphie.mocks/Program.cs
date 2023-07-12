@@ -7,12 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSignalR(options=>
-{
-options.HandshakeTimeout = TimeSpan.MaxValue;
+builder.Services.AddSignalR().AddMessagePackProtocol();
 
-});
-builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
@@ -26,5 +22,15 @@ if (app.Environment.IsDevelopment())
 // app.UseHttpsRedirection();
 
 app.MapHub<MessageHub>("/hubs/messageHub");
+
+
+app.MapPost("/SendMessage",
+
+async ValueTask<IResult> (IHubContext<MessageHub> hubContext, string method, string message) =>
+{
+    await hubContext.Clients.All.SendAsync(method, message);
+    return Results.Ok("");
+});
+
 
 app.Run();
