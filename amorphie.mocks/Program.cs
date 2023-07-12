@@ -7,7 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(options=>
+{
+options.HandshakeTimeout = TimeSpan.MaxValue;
+
+});
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
