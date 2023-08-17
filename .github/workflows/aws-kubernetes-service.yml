@@ -1,0 +1,90 @@
+name: AWS-CI-CD-API
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - './amorphie.mocks'
+  pull_request:
+    types:
+      - closed
+    branches:
+      - 'main'
+    paths:
+      - './amorphie.mocks'
+  workflow_dispatch:
+
+env:
+  APP_NAME: amorphie.mocks
+  NAMESPACE: amorphie-mocks
+  AWS_CLUSTER_NAME: burganbank-poc-eks-cluster
+  AWS_REGION: eu-central-1
+  SECRET: docker-hub
+
+jobs:
+  ci-cd:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+          
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./amorphie.mocks/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ github.sha }}
+
+      # Install kubectl tool
+      - name: Kubectl tool installer
+        uses: Azure/setup-kubectl@v3
+
+      # Configure AWS credentials
+      - name: Configure AWS credentials                          
+        uses: aws-actions/configure-aws-credentials@v1           
+        with:                                                    
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}        
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # The following command will update the kube config file with our cluster information.
+      # It will use the credentials exported by the previous action.
+      - name: Update KubeConfig
+        shell: bash
+        run: |
+          aws eks update-kubeconfig --name ${{ env.AWS_CLUSTER_NAME }} --region=${{ env.AWS_REGION }}
+
+      - name: Check and create secret
+        shell: bash
+        env:
+          DOCKER_CONFIG: ${{ secrets.DOCKER_CONFIG }}
+        continue-on-error: true
+        run: |
+          echo -e "$DOCKER_CONFIG" > ${{ github.workspace }}/.dockerconfig.json
+          cat ${{ github.workspace }}/.dockerconfig.json
+          kubectl create secret generic regcred --from-file=.dockerconfigjson=${{ github.workspace }}/.dockerconfig.json --type=kubernetes.io/dockerconfigjson --namespace ${{ env.NAMESPACE }}
+
+
+      # Deploy Image
+      - name: Deploy to EKS
+        shell: bash
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          APP_NAME: ${{ env.APP_NAME }}
+          github_sha: ${{ github.sha }}
+        run: |
+
+          sed -i "s/image:\ .*/image:\ $DOCKER_HUB_USERNAME\/$APP_NAME:$github_sha/g" ${{ github.workspace }}/amorphie.mocks/manifest/aws-deployment.yaml
+
+          kubectl apply -f ${{ github.workspace }}/amorphie.mocks/manifest-aws/aws-deployment.yaml --namespace ${{ env.NAMESPACE }}
+          kubectl apply -f ${{ github.workspace }}/amorphie.mocks/manifest-aws/aws-service.yaml --namespace ${{ env.NAMESPACE }}
+          kubectl apply -f ${{ github.workspace }}/amorphie.mocks/manifest-aws/aws-ingress.yaml --namespace ${{ env.NAMESPACE }}
+          
+        # kubectl set image deployment/${{ env.APP_NAME }} ${{ env.APP_NAME }}=${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ github.sha }}
+        # kubectl rollout restart deployment/${{ env.APP_NAME }}

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: amorphie-mocks
+  namespace: amorphie-mocks
+  labels:
+    app: amorphie-mocks
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: amorphie-mocks
+  template:
+    metadata:
+      labels:
+        app: amorphie-mocks
+    spec:
+      containers:
+      - name: amorphie-mocks
+        image: burganbank/amorphie.mocks:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: TZ
+          value: Europe/Istanbul
+        imagePullSecrets:
+        - name: regcred
