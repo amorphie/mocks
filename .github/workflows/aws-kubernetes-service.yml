@@ -86,5 +86,5 @@ jobs:
           kubectl apply -f ${{ github.workspace }}/amorphie.mocks/manifest-aws/aws-service.yaml --namespace ${{ env.NAMESPACE }}
           kubectl apply -f ${{ github.workspace }}/amorphie.mocks/manifest-aws/aws-ingress.yaml --namespace ${{ env.NAMESPACE }}
           
-        # kubectl set image deployment/${{ env.APP_NAME }} ${{ env.APP_NAME }}=${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ github.sha }}
-        # kubectl rollout restart deployment/${{ env.APP_NAME }}
+          kubectl set image deployment/${{ env.APP_NAME }} ${{ env.APP_NAME }}=${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ github.sha }}
+          kubectl rollout restart deployment/${{ env.APP_NAME }}
