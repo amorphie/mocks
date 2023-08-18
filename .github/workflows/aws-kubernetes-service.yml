@@ -20,6 +20,7 @@ env:
   AWS_CLUSTER_NAME: burganbank-poc-eks-cluster
   AWS_REGION: eu-central-1
   SECRET: docker-hub
+  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
   ci-cd:
@@ -79,12 +80,12 @@ jobs:
           APP_NAME: ${{ env.APP_NAME }}
           github_sha: ${{ github.sha }}
         run: |
-
-          sed -i "s/image:\ .*/image:\ $DOCKER_HUB_USERNAME\/$APP_NAME:$github_sha/g" ${{ github.workspace }}/amorphie.mocks/manifest/aws-deployment.yaml
+          sed -i "s,latest,$github_sha,g" ${{ github.workspace }}/amorphie.mocks/manifest-aws/aws-deployment.yaml
+          # sed -i "s/image:\ .*/image:\ $DOCKER_HUB_USERNAME\/$APP_NAME:$github_sha/g" ${{ github.workspace }}/amorphie.mocks/manifest/aws-deployment.yaml
 
           kubectl apply -f ${{ github.workspace }}/amorphie.mocks/manifest-aws/aws-deployment.yaml --namespace ${{ env.NAMESPACE }}
           kubectl apply -f ${{ github.workspace }}/amorphie.mocks/manifest-aws/aws-service.yaml --namespace ${{ env.NAMESPACE }}
           kubectl apply -f ${{ github.workspace }}/amorphie.mocks/manifest-aws/aws-ingress.yaml --namespace ${{ env.NAMESPACE }}
           
-          kubectl set image deployment/${{ env.APP_NAME }} ${{ env.APP_NAME }}=${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ github.sha }}
-          kubectl rollout restart deployment/${{ env.APP_NAME }}
+          # kubectl set image deployment/${{ env.APP_NAME }} ${{ env.APP_NAME }}=${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ github.sha }}
+          # kubectl rollout restart deployment/${{ env.APP_NAME }}
