@@ -23,5 +23,5 @@ spec:
         env:
         - name: TZ
           value: Europe/Istanbul
-        imagePullSecrets:
-        - name: regcred
+      imagePullSecrets:
+      - name: regcred
