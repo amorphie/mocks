@@ -1,4 +1,4 @@
-name: AWS-CI-CD-API
+name: AWS-CI-CD
 on:
   push:
     branches:
